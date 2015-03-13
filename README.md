@@ -6,14 +6,19 @@ This will be a simple static app to track my adventures frolicking around the gl
 
 ####The Build
 - React
+  - JSX
+  - components
+- Tests
+  - React.Testutils
+  - Jest?
 - Babel
 - Webpack
 - Radium?
 
 
-
 ####The App
 - [Carousel](https://github.com/hartzis/react-carousel)
+- Use some sort of HTML5 history - each image is a new url, react-router?
 - Google Maps? or other mapping api like leaflet?
 - Touch/Swipe Events
 - Order/Sort by date?
