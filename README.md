@@ -1,6 +1,6 @@
 # frolicking
 
-This will be a simple static app to track my adventures frolicking around the globe.
+This will be a simple app to track my adventures frolicking around the globe. The build process will output a static app that can be served on github pages.
 
 ##Todos
 
