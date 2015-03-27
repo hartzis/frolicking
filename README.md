@@ -2,6 +2,8 @@
 
 This will be a simple app to track my adventures frolicking around the globe. The build process will output a static app that can be served on github pages.
 
+The intent is to learn ES2015, webpack/browserify, and better react work flows and testing.
+
 ##Todos
 
 ####The Build
