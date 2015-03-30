@@ -7,9 +7,9 @@ var Frolick = require('./Frolick')
 
 // create the index.html to be used by webpack
 var Routes = (
-  <Route name="app" path="/" handler={App}>
+  <Route name="app" path="/" handler={Layout}>
     <Route name="frolick" path=":frolickId" handler={Frolick}/>
-    <DefaultRoute handler={AllFrolicks}/>
+    <DefaultRoute handler={Frolick}/>
   </Route>
 );
 

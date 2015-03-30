@@ -1,8 +1,12 @@
 var React = require('react');
 
 var Frolick = React.createClass({
+
   render() {
-    return (<div>{this.props.params.messageId}</div>)
+    let frolick = this.props.params.frolickId ? this.props.params.frolickId : '0'
+    return (<div>{frolick}</div>)
   }
-  
+
 })
+
+module.exports = Frolick;

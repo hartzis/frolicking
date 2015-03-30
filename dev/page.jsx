@@ -4,8 +4,9 @@ var Routes = require('../components/Routes');
 
 module.exports = function(req) {
   var html;
-  Router.run(Routes, req.url,  function (Handler) {
-    html =  React.renderToString(React.createElement(Handler, null));
+  Router.run(Routes, req.url,  function (Handler, state) {
+    var params = state.params;
+    html =  React.renderToString(<Handler params={params}/>);
   });
   return html;
 };

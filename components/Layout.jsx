@@ -22,9 +22,11 @@ var Layout = React.createClass({
         </head>
         <body>
           <div id="layout">
-            <Link to="frolick" params={{frolickId: "123"}}/>
-            <Link to="frolick" params={{frolickId: "1234"}}/>
-            <Link to="frolick" params={{frolickId: "12345"}}/>
+            <ul>
+              <li><Link to="frolick" params={{frolickId: "123"}}>123</Link></li>
+              <li><Link to="frolick" params={{frolickId: "1234"}}>1234</Link></li>
+              <li><Link to="frolick" params={{frolickId: "12345"}}>12345</Link></li>
+            </ul>
             <main role="main">
               <RouteHandler {...this.props}/>
             </main>
