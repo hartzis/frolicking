@@ -23,8 +23,8 @@ var Layout = React.createClass({
         <body>
           <div id="layout">
             <ul>
-              <li><Link to="frolick" params={{frolickId: "123"}}>123</Link></li>
-              <li><Link to="frolick" params={{frolickId: "1234"}}>1234</Link></li>
+              <li><Link to="frolick" params={{frolickId: "123"}}>a123</Link></li>
+              <li><Link to="frolick" params={{frolickId: "1234"}}>b1234</Link></li>
               <li><Link to="frolick" params={{frolickId: "12345"}}>12345</Link></li>
             </ul>
             <main role="main">

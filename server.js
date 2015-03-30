@@ -10,7 +10,8 @@ fs.writeFileSync('dev/index.html', page('/'));
 
 var server = new WebpackDevServer(webpack(config[0]), {
   contentBase: './dev',
-  publicPath: config[0].output.publicPath
+  publicPath: config[0].output.publicPath,
+  hot: true
 });
 // allow server to render any route
 server.use('/', function(req, res) {

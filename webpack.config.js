@@ -11,7 +11,7 @@ var resolveCommon = {
 var moduleCommon = {
   loaders: [
     // Pass *.jsx files through jsx-loader transform
-    { test: /\.jsx$/, loaders: ['babel-loader'] },
+    { test: /\.jsx$/, loaders: ['react-hot', 'babel-loader'] },
 
   ]
 };
@@ -22,6 +22,7 @@ module.exports = [
     // Entry point for static analyzer:
     entry: [
       'webpack-dev-server/client?http://localhost:3000',
+      'webpack/hot/dev-server',
       './dev/entry.jsx'
     ],
 
@@ -36,7 +37,9 @@ module.exports = [
       publicPath: outputPublicPath,
     },
 
-    plugins: [],
+    plugins: [
+      new webpack.HotModuleReplacementPlugin()
+    ],
 
     resolve: resolveCommon,
 
