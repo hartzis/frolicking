@@ -20,10 +20,16 @@ var Carousel = React.createClass({
   },
 
   componentDidMount: function () {
+    // var widths = Array.prototype.map.call(
+    //   React.findDOMNode(this.refs.carouselContainer).children,
+    //   function (node) {
+    //     return node.offsetWidth
+    //   }
+    // )
     var widths = Array.prototype.map.call(
       React.findDOMNode(this.refs.carouselContainer).children,
       function (node) {
-        return node.offsetWidth
+        return 300
       }
     )
 
@@ -85,6 +91,7 @@ var Carousel = React.createClass({
     var transition = 'all 250ms ease-out'
 
     var clear = React.createElement('div', {
+      key: 'clear',
       style: {
         height: 0,
         visibility: 'hidden',
@@ -98,14 +105,14 @@ var Carousel = React.createClass({
       onSwiped: this.doMoveImage,
       ref: 'carouselContainer',
       style: {
-        '-webkit-transform': 'translate3d(' + delta + 'px, 0, 0)',
+        WebkitTransform: 'translate3d(' + delta + 'px, 0, 0)',
         transition: this.state.delta === 0 ? transition : 'none',
         width: this.state.containerWidth + 'px'
       }
     }, this.props.children.map(function (item, i) {
       return React.createElement('div', {
         key: i,
-        style: { float: 'left' }
+        style: { float: 'left', width: '300px' }
       }, item)
     }).concat(clear))
 
