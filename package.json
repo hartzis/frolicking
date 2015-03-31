@@ -4,6 +4,7 @@
   "description": "This will be a simple app to track my adventures frolicking around the globe. The build process will output a static app that can be served on github pages.",
   "main": "index.js",
   "scripts": {
+    "start": "webpack --progress && node server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
