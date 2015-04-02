@@ -10,11 +10,21 @@ var Frolick = React.createClass({
         {frolick}
         <div style={{ width: 320 }}>
           <Carousel>
-            <img src="http://www.fillmurray.com/300/300" />
-            <img src="http://www.fillmurray.com/300/299" />
-            <img src="http://www.fillmurray.com/300/298" />
-            <img src="http://www.fillmurray.com/300/301" />
-            <img src="http://www.fillmurray.com/300/302" />
+            <div>
+              <img src="http://www.fillmurray.com/300/300" />
+            </div>
+            <div>
+              <img src="http://www.fillmurray.com/300/299" />
+            </div>
+            <div>
+              <img src="http://www.fillmurray.com/300/298" />
+            </div>
+            <div>
+              <img src="http://www.fillmurray.com/300/301" />
+            </div>
+            <div>
+              <img src="http://www.fillmurray.com/300/302" />
+            </div>
           </Carousel>
         </div>
       </div>

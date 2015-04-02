@@ -79,6 +79,9 @@ module.exports =
 	var Layout = __webpack_require__(4);
 	var Frolick = __webpack_require__(5);
 
+	// initialize touch events?
+	// React.initializeTouchEvents(true)
+
 	// create the index.html to be used by webpack
 	var Routes = React.createElement(
 	  Route,
@@ -249,11 +252,31 @@ module.exports =
 	        React.createElement(
 	          Carousel,
 	          null,
-	          React.createElement("img", { src: "http://www.fillmurray.com/300/300" }),
-	          React.createElement("img", { src: "http://www.fillmurray.com/300/299" }),
-	          React.createElement("img", { src: "http://www.fillmurray.com/300/298" }),
-	          React.createElement("img", { src: "http://www.fillmurray.com/300/301" }),
-	          React.createElement("img", { src: "http://www.fillmurray.com/300/302" })
+	          React.createElement(
+	            "div",
+	            null,
+	            React.createElement("img", { src: "http://www.fillmurray.com/300/300" })
+	          ),
+	          React.createElement(
+	            "div",
+	            null,
+	            React.createElement("img", { src: "http://www.fillmurray.com/300/299" })
+	          ),
+	          React.createElement(
+	            "div",
+	            null,
+	            React.createElement("img", { src: "http://www.fillmurray.com/300/298" })
+	          ),
+	          React.createElement(
+	            "div",
+	            null,
+	            React.createElement("img", { src: "http://www.fillmurray.com/300/301" })
+	          ),
+	          React.createElement(
+	            "div",
+	            null,
+	            React.createElement("img", { src: "http://www.fillmurray.com/300/302" })
+	          )
 	        )
 	      )
 	    );
@@ -2465,7 +2488,7 @@ module.exports =
 
 	var React = __webpack_require__(2);
 
-	var Swipeable = React.createFactory(__webpack_require__(62));
+	var Swipeable = __webpack_require__(62);
 
 	var Carousel = React.createClass({
 	  displayName: "Carousel",
@@ -2482,23 +2505,38 @@ module.exports =
 	  },
 
 	  componentDidMount: function componentDidMount() {
-	    var widths = Array.prototype.map.call(React.findDOMNode(this.refs.carouselContainer).children, function (node) {
-	      return node.offsetWidth;
-	    });
+	    var widths = this._getChildrenWidths();
 
-	    var totalWidth = widths.reduce(function (a, b) {
-	      return a + b;
-	    }, 0);
+	    this._updateWidths();
+
 	    var startPos = widths.reduce(function (total, width) {
 	      total.push(total[total.length - 1] + width);
 	      return total;
 	    }, [0]);
 
 	    this.setState({
+	      itemStart: startPos
+	    });
+	  },
+
+	  _updateWidths: function _updateWidths() {
+	    var widths = this._getChildrenWidths();
+
+	    var totalWidth = widths.reduce(function (a, b) {
+	      return a + b;
+	    }, 0);
+
+	    this.setState({
 	      itemWidths: widths,
-	      itemStart: startPos,
 	      containerWidth: totalWidth
 	    });
+	  },
+
+	  _getChildrenWidths: function _getChildrenWidths() {
+	    var widths = Array.prototype.map.call(React.findDOMNode(this.refs.carouselContainer).children, function (node) {
+	      return node.offsetWidth;
+	    });
+	    return widths;
 	  },
 
 	  addResistance: function addResistance(delta) {
@@ -2544,35 +2582,29 @@ module.exports =
 
 	    var transition = "all 250ms ease-out";
 
-	    var clear = React.createElement("div", {
-	      style: {
-	        height: 0,
-	        visibility: "hidden",
-	        clear: "left"
-	      }
-	    });
+	    var clear = React.createElement("div", { style: { height: 0, visibility: "hidden", clear: "left" }, key: "clear" });
 
-	    var swipeContainer = Swipeable({
-	      onSwipingRight: this.prevImageScroll,
-	      onSwipingLeft: this.nextImageScroll,
-	      onSwiped: this.doMoveImage,
-	      ref: "carouselContainer",
-	      style: {
-	        webkitTransform: "translate3d(" + delta + "px, 0, 0)",
-	        transition: this.state.delta === 0 ? transition : "none",
-	        width: this.state.containerWidth + "px"
-	      }
-	    }, this.props.children.map(function (item, i) {
-	      return React.createElement("div", {
-	        key: i,
-	        style: { float: "left" }
-	      }, item);
-	    }).concat(clear));
+	    React.Children.forEach(this.props.children, (function (child) {
+	      child.props.style = { float: "left" };
+	    }).bind(this));
 
 	    return React.createElement(
 	      "div",
 	      _extends({}, this.props, { style: { overflow: "hidden", width: "100%" } }),
-	      swipeContainer
+	      React.createElement(
+	        Swipeable,
+	        { onSwipingRight: this.prevImageScroll,
+	          onSwipingLeft: this.nextImageScroll,
+	          onSwiped: this.doMoveImage,
+	          ref: "carouselContainer",
+	          style: {
+	            WebkitTransform: "translate3d(" + delta + "px, 0, 0)",
+	            transition: this.state.delta === 0 ? transition : "none",
+	            width: this.state.containerWidth
+	          } },
+	        this.props.children,
+	        clear
+	      )
 	    );
 	  }
 	});
@@ -2598,7 +2630,7 @@ module.exports =
 
 	'use strict';
 
-	var EventConstants = __webpack_require__(66);
+	var EventConstants = __webpack_require__(63);
 
 	var invariant = __webpack_require__(50);
 
@@ -2821,10 +2853,10 @@ module.exports =
 
 	'use strict';
 
-	var PooledClass = __webpack_require__(63);
-	var ReactFragment = __webpack_require__(64);
+	var PooledClass = __webpack_require__(64);
+	var ReactFragment = __webpack_require__(65);
 
-	var traverseAllChildren = __webpack_require__(65);
+	var traverseAllChildren = __webpack_require__(66);
 	var warning = __webpack_require__(53);
 
 	var twoArgumentPooler = PooledClass.twoArgumentPooler;
@@ -4498,7 +4530,7 @@ module.exports =
 	'use strict';
 
 	var ReactElement = __webpack_require__(34);
-	var ReactFragment = __webpack_require__(64);
+	var ReactFragment = __webpack_require__(65);
 	var ReactPropTypeLocations = __webpack_require__(71);
 	var ReactPropTypeLocationNames = __webpack_require__(72);
 	var ReactCurrentOwner = __webpack_require__(33);
@@ -6757,7 +6789,7 @@ module.exports =
 	'use strict';
 
 	var ReactElement = __webpack_require__(34);
-	var ReactFragment = __webpack_require__(64);
+	var ReactFragment = __webpack_require__(65);
 	var ReactPropTypeLocationNames = __webpack_require__(72);
 
 	var emptyFunction = __webpack_require__(121);
@@ -8293,6 +8325,7 @@ module.exports =
 	  },
 
 	  touchStart: function touchStart(e) {
+	    console.log("swiping");
 	    if (e.touches.length > 1) {
 	      return;
 	    }
@@ -8392,6 +8425,82 @@ module.exports =
 
 /***/ },
 /* 63 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule EventConstants
+	 */
+
+	'use strict';
+
+	var keyMirror = __webpack_require__(73);
+
+	var PropagationPhases = keyMirror({bubbled: null, captured: null});
+
+	/**
+	 * Types of raw signals from the browser caught at the top level.
+	 */
+	var topLevelTypes = keyMirror({
+	  topBlur: null,
+	  topChange: null,
+	  topClick: null,
+	  topCompositionEnd: null,
+	  topCompositionStart: null,
+	  topCompositionUpdate: null,
+	  topContextMenu: null,
+	  topCopy: null,
+	  topCut: null,
+	  topDoubleClick: null,
+	  topDrag: null,
+	  topDragEnd: null,
+	  topDragEnter: null,
+	  topDragExit: null,
+	  topDragLeave: null,
+	  topDragOver: null,
+	  topDragStart: null,
+	  topDrop: null,
+	  topError: null,
+	  topFocus: null,
+	  topInput: null,
+	  topKeyDown: null,
+	  topKeyPress: null,
+	  topKeyUp: null,
+	  topLoad: null,
+	  topMouseDown: null,
+	  topMouseMove: null,
+	  topMouseOut: null,
+	  topMouseOver: null,
+	  topMouseUp: null,
+	  topPaste: null,
+	  topReset: null,
+	  topScroll: null,
+	  topSelectionChange: null,
+	  topSubmit: null,
+	  topTextInput: null,
+	  topTouchCancel: null,
+	  topTouchEnd: null,
+	  topTouchMove: null,
+	  topTouchStart: null,
+	  topWheel: null
+	});
+
+	var EventConstants = {
+	  topLevelTypes: topLevelTypes,
+	  PropagationPhases: PropagationPhases
+	};
+
+	module.exports = EventConstants;
+
+
+/***/ },
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8509,7 +8618,7 @@ module.exports =
 
 
 /***/ },
-/* 64 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8696,7 +8805,7 @@ module.exports =
 
 
 /***/ },
-/* 65 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8713,7 +8822,7 @@ module.exports =
 	'use strict';
 
 	var ReactElement = __webpack_require__(34);
-	var ReactFragment = __webpack_require__(64);
+	var ReactFragment = __webpack_require__(65);
 	var ReactInstanceHandles = __webpack_require__(39);
 
 	var getIteratorFn = __webpack_require__(77);
@@ -8948,82 +9057,6 @@ module.exports =
 	}
 
 	module.exports = traverseAllChildren;
-
-
-/***/ },
-/* 66 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule EventConstants
-	 */
-
-	'use strict';
-
-	var keyMirror = __webpack_require__(73);
-
-	var PropagationPhases = keyMirror({bubbled: null, captured: null});
-
-	/**
-	 * Types of raw signals from the browser caught at the top level.
-	 */
-	var topLevelTypes = keyMirror({
-	  topBlur: null,
-	  topChange: null,
-	  topClick: null,
-	  topCompositionEnd: null,
-	  topCompositionStart: null,
-	  topCompositionUpdate: null,
-	  topContextMenu: null,
-	  topCopy: null,
-	  topCut: null,
-	  topDoubleClick: null,
-	  topDrag: null,
-	  topDragEnd: null,
-	  topDragEnter: null,
-	  topDragExit: null,
-	  topDragLeave: null,
-	  topDragOver: null,
-	  topDragStart: null,
-	  topDrop: null,
-	  topError: null,
-	  topFocus: null,
-	  topInput: null,
-	  topKeyDown: null,
-	  topKeyPress: null,
-	  topKeyUp: null,
-	  topLoad: null,
-	  topMouseDown: null,
-	  topMouseMove: null,
-	  topMouseOut: null,
-	  topMouseOver: null,
-	  topMouseUp: null,
-	  topPaste: null,
-	  topReset: null,
-	  topScroll: null,
-	  topSelectionChange: null,
-	  topSubmit: null,
-	  topTextInput: null,
-	  topTouchCancel: null,
-	  topTouchEnd: null,
-	  topTouchMove: null,
-	  topTouchStart: null,
-	  topWheel: null
-	});
-
-	var EventConstants = {
-	  topLevelTypes: topLevelTypes,
-	  PropagationPhases: PropagationPhases
-	};
-
-	module.exports = EventConstants;
 
 
 /***/ },
@@ -10667,12 +10700,12 @@ module.exports =
 
 	'use strict';
 
-	var EventConstants = __webpack_require__(66);
-	var EventPropagators = __webpack_require__(132);
+	var EventConstants = __webpack_require__(63);
+	var EventPropagators = __webpack_require__(133);
 	var ExecutionEnvironment = __webpack_require__(48);
-	var FallbackCompositionState = __webpack_require__(133);
-	var SyntheticCompositionEvent = __webpack_require__(134);
-	var SyntheticInputEvent = __webpack_require__(135);
+	var FallbackCompositionState = __webpack_require__(136);
+	var SyntheticCompositionEvent = __webpack_require__(137);
+	var SyntheticInputEvent = __webpack_require__(138);
 
 	var keyOf = __webpack_require__(74);
 
@@ -11165,15 +11198,15 @@ module.exports =
 
 	'use strict';
 
-	var EventConstants = __webpack_require__(66);
-	var EventPluginHub = __webpack_require__(136);
-	var EventPropagators = __webpack_require__(132);
+	var EventConstants = __webpack_require__(63);
+	var EventPluginHub = __webpack_require__(132);
+	var EventPropagators = __webpack_require__(133);
 	var ExecutionEnvironment = __webpack_require__(48);
 	var ReactUpdates = __webpack_require__(115);
-	var SyntheticEvent = __webpack_require__(137);
+	var SyntheticEvent = __webpack_require__(134);
 
 	var isEventSupported = __webpack_require__(131);
-	var isTextInputElement = __webpack_require__(138);
+	var isTextInputElement = __webpack_require__(135);
 	var keyOf = __webpack_require__(74);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
@@ -11624,8 +11657,8 @@ module.exports =
 
 	'use strict';
 
-	var EventConstants = __webpack_require__(66);
-	var EventPropagators = __webpack_require__(132);
+	var EventConstants = __webpack_require__(63);
+	var EventPropagators = __webpack_require__(133);
 	var SyntheticMouseEvent = __webpack_require__(139);
 
 	var ReactMount = __webpack_require__(40);
@@ -11977,7 +12010,7 @@ module.exports =
 
 	'use strict';
 
-	var EventConstants = __webpack_require__(66);
+	var EventConstants = __webpack_require__(63);
 
 	var emptyFunction = __webpack_require__(121);
 
@@ -12218,7 +12251,7 @@ module.exports =
 
 	'use strict';
 
-	var EventConstants = __webpack_require__(66);
+	var EventConstants = __webpack_require__(63);
 	var LocalEventTrapMixin = __webpack_require__(142);
 	var ReactBrowserComponentMixin = __webpack_require__(90);
 	var ReactClass = __webpack_require__(31);
@@ -12271,7 +12304,7 @@ module.exports =
 
 	'use strict';
 
-	var EventConstants = __webpack_require__(66);
+	var EventConstants = __webpack_require__(63);
 	var LocalEventTrapMixin = __webpack_require__(142);
 	var ReactBrowserComponentMixin = __webpack_require__(90);
 	var ReactClass = __webpack_require__(31);
@@ -12491,7 +12524,7 @@ module.exports =
 
 	'use strict';
 
-	var EventConstants = __webpack_require__(66);
+	var EventConstants = __webpack_require__(63);
 	var LocalEventTrapMixin = __webpack_require__(142);
 	var ReactBrowserComponentMixin = __webpack_require__(90);
 	var ReactClass = __webpack_require__(31);
@@ -13100,7 +13133,7 @@ module.exports =
 
 	var EventListener = __webpack_require__(145);
 	var ExecutionEnvironment = __webpack_require__(48);
-	var PooledClass = __webpack_require__(63);
+	var PooledClass = __webpack_require__(64);
 	var ReactInstanceHandles = __webpack_require__(39);
 	var ReactMount = __webpack_require__(40);
 	var ReactUpdates = __webpack_require__(115);
@@ -13285,7 +13318,7 @@ module.exports =
 	'use strict';
 
 	var DOMProperty = __webpack_require__(111);
-	var EventPluginHub = __webpack_require__(136);
+	var EventPluginHub = __webpack_require__(132);
 	var ReactComponentEnvironment = __webpack_require__(148);
 	var ReactClass = __webpack_require__(31);
 	var ReactEmptyComponent = __webpack_require__(113);
@@ -13332,7 +13365,7 @@ module.exports =
 	'use strict';
 
 	var CallbackQueue = __webpack_require__(149);
-	var PooledClass = __webpack_require__(63);
+	var PooledClass = __webpack_require__(64);
 	var ReactBrowserEventEmitter = __webpack_require__(112);
 	var ReactInputSelection = __webpack_require__(150);
 	var ReactPutListenerQueue = __webpack_require__(151);
@@ -13510,13 +13543,13 @@ module.exports =
 
 	'use strict';
 
-	var EventConstants = __webpack_require__(66);
-	var EventPropagators = __webpack_require__(132);
+	var EventConstants = __webpack_require__(63);
+	var EventPropagators = __webpack_require__(133);
 	var ReactInputSelection = __webpack_require__(150);
-	var SyntheticEvent = __webpack_require__(137);
+	var SyntheticEvent = __webpack_require__(134);
 
 	var getActiveElement = __webpack_require__(152);
-	var isTextInputElement = __webpack_require__(138);
+	var isTextInputElement = __webpack_require__(135);
 	var keyOf = __webpack_require__(74);
 	var shallowEqual = __webpack_require__(153);
 
@@ -13744,11 +13777,11 @@ module.exports =
 
 	'use strict';
 
-	var EventConstants = __webpack_require__(66);
+	var EventConstants = __webpack_require__(63);
 	var EventPluginUtils = __webpack_require__(28);
-	var EventPropagators = __webpack_require__(132);
+	var EventPropagators = __webpack_require__(133);
 	var SyntheticClipboardEvent = __webpack_require__(154);
-	var SyntheticEvent = __webpack_require__(137);
+	var SyntheticEvent = __webpack_require__(134);
 	var SyntheticFocusEvent = __webpack_require__(155);
 	var SyntheticKeyboardEvent = __webpack_require__(156);
 	var SyntheticMouseEvent = __webpack_require__(139);
@@ -14941,8 +14974,8 @@ module.exports =
 
 	'use strict';
 
-	var EventConstants = __webpack_require__(66);
-	var EventPluginHub = __webpack_require__(136);
+	var EventConstants = __webpack_require__(63);
+	var EventPluginHub = __webpack_require__(132);
 	var EventPluginRegistry = __webpack_require__(164);
 	var ReactEventEmitterMixin = __webpack_require__(165);
 	var ViewportMetrics = __webpack_require__(166);
@@ -15447,7 +15480,7 @@ module.exports =
 	'use strict';
 
 	var CallbackQueue = __webpack_require__(149);
-	var PooledClass = __webpack_require__(63);
+	var PooledClass = __webpack_require__(64);
 	var ReactCurrentOwner = __webpack_require__(33);
 	var ReactPerf = __webpack_require__(41);
 	var ReactReconciler = __webpack_require__(43);
@@ -16269,7 +16302,7 @@ module.exports =
 
 	'use strict';
 
-	var PooledClass = __webpack_require__(63);
+	var PooledClass = __webpack_require__(64);
 	var CallbackQueue = __webpack_require__(149);
 	var ReactPutListenerQueue = __webpack_require__(151);
 	var Transaction = __webpack_require__(140);
@@ -17192,344 +17225,6 @@ module.exports =
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
-	 * @providesModule EventPropagators
-	 */
-
-	'use strict';
-
-	var EventConstants = __webpack_require__(66);
-	var EventPluginHub = __webpack_require__(136);
-
-	var accumulateInto = __webpack_require__(179);
-	var forEachAccumulated = __webpack_require__(180);
-
-	var PropagationPhases = EventConstants.PropagationPhases;
-	var getListener = EventPluginHub.getListener;
-
-	/**
-	 * Some event types have a notion of different registration names for different
-	 * "phases" of propagation. This finds listeners by a given phase.
-	 */
-	function listenerAtPhase(id, event, propagationPhase) {
-	  var registrationName =
-	    event.dispatchConfig.phasedRegistrationNames[propagationPhase];
-	  return getListener(id, registrationName);
-	}
-
-	/**
-	 * Tags a `SyntheticEvent` with dispatched listeners. Creating this function
-	 * here, allows us to not have to bind or create functions for each event.
-	 * Mutating the event's members allows us to not have to create a wrapping
-	 * "dispatch" object that pairs the event with the listener.
-	 */
-	function accumulateDirectionalDispatches(domID, upwards, event) {
-	  if ("production" !== process.env.NODE_ENV) {
-	    if (!domID) {
-	      throw new Error('Dispatching id must not be null');
-	    }
-	  }
-	  var phase = upwards ? PropagationPhases.bubbled : PropagationPhases.captured;
-	  var listener = listenerAtPhase(domID, event, phase);
-	  if (listener) {
-	    event._dispatchListeners =
-	      accumulateInto(event._dispatchListeners, listener);
-	    event._dispatchIDs = accumulateInto(event._dispatchIDs, domID);
-	  }
-	}
-
-	/**
-	 * Collect dispatches (must be entirely collected before dispatching - see unit
-	 * tests). Lazily allocate the array to conserve memory.  We must loop through
-	 * each event and perform the traversal for each one. We can not perform a
-	 * single traversal for the entire collection of events because each event may
-	 * have a different target.
-	 */
-	function accumulateTwoPhaseDispatchesSingle(event) {
-	  if (event && event.dispatchConfig.phasedRegistrationNames) {
-	    EventPluginHub.injection.getInstanceHandle().traverseTwoPhase(
-	      event.dispatchMarker,
-	      accumulateDirectionalDispatches,
-	      event
-	    );
-	  }
-	}
-
-
-	/**
-	 * Accumulates without regard to direction, does not look for phased
-	 * registration names. Same as `accumulateDirectDispatchesSingle` but without
-	 * requiring that the `dispatchMarker` be the same as the dispatched ID.
-	 */
-	function accumulateDispatches(id, ignoredDirection, event) {
-	  if (event && event.dispatchConfig.registrationName) {
-	    var registrationName = event.dispatchConfig.registrationName;
-	    var listener = getListener(id, registrationName);
-	    if (listener) {
-	      event._dispatchListeners =
-	        accumulateInto(event._dispatchListeners, listener);
-	      event._dispatchIDs = accumulateInto(event._dispatchIDs, id);
-	    }
-	  }
-	}
-
-	/**
-	 * Accumulates dispatches on an `SyntheticEvent`, but only for the
-	 * `dispatchMarker`.
-	 * @param {SyntheticEvent} event
-	 */
-	function accumulateDirectDispatchesSingle(event) {
-	  if (event && event.dispatchConfig.registrationName) {
-	    accumulateDispatches(event.dispatchMarker, null, event);
-	  }
-	}
-
-	function accumulateTwoPhaseDispatches(events) {
-	  forEachAccumulated(events, accumulateTwoPhaseDispatchesSingle);
-	}
-
-	function accumulateEnterLeaveDispatches(leave, enter, fromID, toID) {
-	  EventPluginHub.injection.getInstanceHandle().traverseEnterLeave(
-	    fromID,
-	    toID,
-	    accumulateDispatches,
-	    leave,
-	    enter
-	  );
-	}
-
-
-	function accumulateDirectDispatches(events) {
-	  forEachAccumulated(events, accumulateDirectDispatchesSingle);
-	}
-
-
-
-	/**
-	 * A small set of propagation patterns, each of which will accept a small amount
-	 * of information, and generate a set of "dispatch ready event objects" - which
-	 * are sets of events that have already been annotated with a set of dispatched
-	 * listener functions/ids. The API is designed this way to discourage these
-	 * propagation strategies from actually executing the dispatches, since we
-	 * always want to collect the entire set of dispatches before executing event a
-	 * single one.
-	 *
-	 * @constructor EventPropagators
-	 */
-	var EventPropagators = {
-	  accumulateTwoPhaseDispatches: accumulateTwoPhaseDispatches,
-	  accumulateDirectDispatches: accumulateDirectDispatches,
-	  accumulateEnterLeaveDispatches: accumulateEnterLeaveDispatches
-	};
-
-	module.exports = EventPropagators;
-
-
-/***/ },
-/* 133 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule FallbackCompositionState
-	 * @typechecks static-only
-	 */
-
-	'use strict';
-
-	var PooledClass = __webpack_require__(63);
-
-	var assign = __webpack_require__(45);
-	var getTextContentAccessor = __webpack_require__(181);
-
-	/**
-	 * This helper class stores information about text content of a target node,
-	 * allowing comparison of content before and after a given event.
-	 *
-	 * Identify the node where selection currently begins, then observe
-	 * both its text content and its current position in the DOM. Since the
-	 * browser may natively replace the target node during composition, we can
-	 * use its position to find its replacement.
-	 *
-	 * @param {DOMEventTarget} root
-	 */
-	function FallbackCompositionState(root) {
-	  this._root = root;
-	  this._startText = this.getText();
-	  this._fallbackText = null;
-	}
-
-	assign(FallbackCompositionState.prototype, {
-	  /**
-	   * Get current text of input.
-	   *
-	   * @return {string}
-	   */
-	  getText: function() {
-	    if ('value' in this._root) {
-	      return this._root.value;
-	    }
-	    return this._root[getTextContentAccessor()];
-	  },
-
-	  /**
-	   * Determine the differing substring between the initially stored
-	   * text content and the current content.
-	   *
-	   * @return {string}
-	   */
-	  getData: function() {
-	    if (this._fallbackText) {
-	      return this._fallbackText;
-	    }
-
-	    var start;
-	    var startValue = this._startText;
-	    var startLength = startValue.length;
-	    var end;
-	    var endValue = this.getText();
-	    var endLength = endValue.length;
-
-	    for (start = 0; start < startLength; start++) {
-	      if (startValue[start] !== endValue[start]) {
-	        break;
-	      }
-	    }
-
-	    var minEnd = startLength - start;
-	    for (end = 1; end <= minEnd; end++) {
-	      if (startValue[startLength - end] !== endValue[endLength - end]) {
-	        break;
-	      }
-	    }
-
-	    var sliceTail = end > 1 ? 1 - end : undefined;
-	    this._fallbackText = endValue.slice(start, sliceTail);
-	    return this._fallbackText;
-	  }
-	});
-
-	PooledClass.addPoolingTo(FallbackCompositionState);
-
-	module.exports = FallbackCompositionState;
-
-
-/***/ },
-/* 134 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule SyntheticCompositionEvent
-	 * @typechecks static-only
-	 */
-
-	'use strict';
-
-	var SyntheticEvent = __webpack_require__(137);
-
-	/**
-	 * @interface Event
-	 * @see http://www.w3.org/TR/DOM-Level-3-Events/#events-compositionevents
-	 */
-	var CompositionEventInterface = {
-	  data: null
-	};
-
-	/**
-	 * @param {object} dispatchConfig Configuration used to dispatch this event.
-	 * @param {string} dispatchMarker Marker identifying the event target.
-	 * @param {object} nativeEvent Native browser event.
-	 * @extends {SyntheticUIEvent}
-	 */
-	function SyntheticCompositionEvent(
-	  dispatchConfig,
-	  dispatchMarker,
-	  nativeEvent) {
-	  SyntheticEvent.call(this, dispatchConfig, dispatchMarker, nativeEvent);
-	}
-
-	SyntheticEvent.augmentClass(
-	  SyntheticCompositionEvent,
-	  CompositionEventInterface
-	);
-
-	module.exports = SyntheticCompositionEvent;
-
-
-/***/ },
-/* 135 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule SyntheticInputEvent
-	 * @typechecks static-only
-	 */
-
-	'use strict';
-
-	var SyntheticEvent = __webpack_require__(137);
-
-	/**
-	 * @interface Event
-	 * @see http://www.w3.org/TR/2013/WD-DOM-Level-3-Events-20131105
-	 *      /#events-inputevents
-	 */
-	var InputEventInterface = {
-	  data: null
-	};
-
-	/**
-	 * @param {object} dispatchConfig Configuration used to dispatch this event.
-	 * @param {string} dispatchMarker Marker identifying the event target.
-	 * @param {object} nativeEvent Native browser event.
-	 * @extends {SyntheticUIEvent}
-	 */
-	function SyntheticInputEvent(
-	  dispatchConfig,
-	  dispatchMarker,
-	  nativeEvent) {
-	  SyntheticEvent.call(this, dispatchConfig, dispatchMarker, nativeEvent);
-	}
-
-	SyntheticEvent.augmentClass(
-	  SyntheticInputEvent,
-	  InputEventInterface
-	);
-
-	module.exports = SyntheticInputEvent;
-
-
-/***/ },
-/* 136 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
 	 * @providesModule EventPluginHub
 	 */
 
@@ -17799,7 +17494,151 @@ module.exports =
 
 
 /***/ },
-/* 137 */
+/* 133 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule EventPropagators
+	 */
+
+	'use strict';
+
+	var EventConstants = __webpack_require__(63);
+	var EventPluginHub = __webpack_require__(132);
+
+	var accumulateInto = __webpack_require__(179);
+	var forEachAccumulated = __webpack_require__(180);
+
+	var PropagationPhases = EventConstants.PropagationPhases;
+	var getListener = EventPluginHub.getListener;
+
+	/**
+	 * Some event types have a notion of different registration names for different
+	 * "phases" of propagation. This finds listeners by a given phase.
+	 */
+	function listenerAtPhase(id, event, propagationPhase) {
+	  var registrationName =
+	    event.dispatchConfig.phasedRegistrationNames[propagationPhase];
+	  return getListener(id, registrationName);
+	}
+
+	/**
+	 * Tags a `SyntheticEvent` with dispatched listeners. Creating this function
+	 * here, allows us to not have to bind or create functions for each event.
+	 * Mutating the event's members allows us to not have to create a wrapping
+	 * "dispatch" object that pairs the event with the listener.
+	 */
+	function accumulateDirectionalDispatches(domID, upwards, event) {
+	  if ("production" !== process.env.NODE_ENV) {
+	    if (!domID) {
+	      throw new Error('Dispatching id must not be null');
+	    }
+	  }
+	  var phase = upwards ? PropagationPhases.bubbled : PropagationPhases.captured;
+	  var listener = listenerAtPhase(domID, event, phase);
+	  if (listener) {
+	    event._dispatchListeners =
+	      accumulateInto(event._dispatchListeners, listener);
+	    event._dispatchIDs = accumulateInto(event._dispatchIDs, domID);
+	  }
+	}
+
+	/**
+	 * Collect dispatches (must be entirely collected before dispatching - see unit
+	 * tests). Lazily allocate the array to conserve memory.  We must loop through
+	 * each event and perform the traversal for each one. We can not perform a
+	 * single traversal for the entire collection of events because each event may
+	 * have a different target.
+	 */
+	function accumulateTwoPhaseDispatchesSingle(event) {
+	  if (event && event.dispatchConfig.phasedRegistrationNames) {
+	    EventPluginHub.injection.getInstanceHandle().traverseTwoPhase(
+	      event.dispatchMarker,
+	      accumulateDirectionalDispatches,
+	      event
+	    );
+	  }
+	}
+
+
+	/**
+	 * Accumulates without regard to direction, does not look for phased
+	 * registration names. Same as `accumulateDirectDispatchesSingle` but without
+	 * requiring that the `dispatchMarker` be the same as the dispatched ID.
+	 */
+	function accumulateDispatches(id, ignoredDirection, event) {
+	  if (event && event.dispatchConfig.registrationName) {
+	    var registrationName = event.dispatchConfig.registrationName;
+	    var listener = getListener(id, registrationName);
+	    if (listener) {
+	      event._dispatchListeners =
+	        accumulateInto(event._dispatchListeners, listener);
+	      event._dispatchIDs = accumulateInto(event._dispatchIDs, id);
+	    }
+	  }
+	}
+
+	/**
+	 * Accumulates dispatches on an `SyntheticEvent`, but only for the
+	 * `dispatchMarker`.
+	 * @param {SyntheticEvent} event
+	 */
+	function accumulateDirectDispatchesSingle(event) {
+	  if (event && event.dispatchConfig.registrationName) {
+	    accumulateDispatches(event.dispatchMarker, null, event);
+	  }
+	}
+
+	function accumulateTwoPhaseDispatches(events) {
+	  forEachAccumulated(events, accumulateTwoPhaseDispatchesSingle);
+	}
+
+	function accumulateEnterLeaveDispatches(leave, enter, fromID, toID) {
+	  EventPluginHub.injection.getInstanceHandle().traverseEnterLeave(
+	    fromID,
+	    toID,
+	    accumulateDispatches,
+	    leave,
+	    enter
+	  );
+	}
+
+
+	function accumulateDirectDispatches(events) {
+	  forEachAccumulated(events, accumulateDirectDispatchesSingle);
+	}
+
+
+
+	/**
+	 * A small set of propagation patterns, each of which will accept a small amount
+	 * of information, and generate a set of "dispatch ready event objects" - which
+	 * are sets of events that have already been annotated with a set of dispatched
+	 * listener functions/ids. The API is designed this way to discourage these
+	 * propagation strategies from actually executing the dispatches, since we
+	 * always want to collect the entire set of dispatches before executing event a
+	 * single one.
+	 *
+	 * @constructor EventPropagators
+	 */
+	var EventPropagators = {
+	  accumulateTwoPhaseDispatches: accumulateTwoPhaseDispatches,
+	  accumulateDirectDispatches: accumulateDirectDispatches,
+	  accumulateEnterLeaveDispatches: accumulateEnterLeaveDispatches
+	};
+
+	module.exports = EventPropagators;
+
+
+/***/ },
+/* 134 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17816,7 +17655,7 @@ module.exports =
 
 	'use strict';
 
-	var PooledClass = __webpack_require__(63);
+	var PooledClass = __webpack_require__(64);
 
 	var assign = __webpack_require__(45);
 	var emptyFunction = __webpack_require__(121);
@@ -17969,7 +17808,7 @@ module.exports =
 
 
 /***/ },
-/* 138 */
+/* 135 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18013,6 +17852,200 @@ module.exports =
 	}
 
 	module.exports = isTextInputElement;
+
+
+/***/ },
+/* 136 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule FallbackCompositionState
+	 * @typechecks static-only
+	 */
+
+	'use strict';
+
+	var PooledClass = __webpack_require__(64);
+
+	var assign = __webpack_require__(45);
+	var getTextContentAccessor = __webpack_require__(181);
+
+	/**
+	 * This helper class stores information about text content of a target node,
+	 * allowing comparison of content before and after a given event.
+	 *
+	 * Identify the node where selection currently begins, then observe
+	 * both its text content and its current position in the DOM. Since the
+	 * browser may natively replace the target node during composition, we can
+	 * use its position to find its replacement.
+	 *
+	 * @param {DOMEventTarget} root
+	 */
+	function FallbackCompositionState(root) {
+	  this._root = root;
+	  this._startText = this.getText();
+	  this._fallbackText = null;
+	}
+
+	assign(FallbackCompositionState.prototype, {
+	  /**
+	   * Get current text of input.
+	   *
+	   * @return {string}
+	   */
+	  getText: function() {
+	    if ('value' in this._root) {
+	      return this._root.value;
+	    }
+	    return this._root[getTextContentAccessor()];
+	  },
+
+	  /**
+	   * Determine the differing substring between the initially stored
+	   * text content and the current content.
+	   *
+	   * @return {string}
+	   */
+	  getData: function() {
+	    if (this._fallbackText) {
+	      return this._fallbackText;
+	    }
+
+	    var start;
+	    var startValue = this._startText;
+	    var startLength = startValue.length;
+	    var end;
+	    var endValue = this.getText();
+	    var endLength = endValue.length;
+
+	    for (start = 0; start < startLength; start++) {
+	      if (startValue[start] !== endValue[start]) {
+	        break;
+	      }
+	    }
+
+	    var minEnd = startLength - start;
+	    for (end = 1; end <= minEnd; end++) {
+	      if (startValue[startLength - end] !== endValue[endLength - end]) {
+	        break;
+	      }
+	    }
+
+	    var sliceTail = end > 1 ? 1 - end : undefined;
+	    this._fallbackText = endValue.slice(start, sliceTail);
+	    return this._fallbackText;
+	  }
+	});
+
+	PooledClass.addPoolingTo(FallbackCompositionState);
+
+	module.exports = FallbackCompositionState;
+
+
+/***/ },
+/* 137 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule SyntheticCompositionEvent
+	 * @typechecks static-only
+	 */
+
+	'use strict';
+
+	var SyntheticEvent = __webpack_require__(134);
+
+	/**
+	 * @interface Event
+	 * @see http://www.w3.org/TR/DOM-Level-3-Events/#events-compositionevents
+	 */
+	var CompositionEventInterface = {
+	  data: null
+	};
+
+	/**
+	 * @param {object} dispatchConfig Configuration used to dispatch this event.
+	 * @param {string} dispatchMarker Marker identifying the event target.
+	 * @param {object} nativeEvent Native browser event.
+	 * @extends {SyntheticUIEvent}
+	 */
+	function SyntheticCompositionEvent(
+	  dispatchConfig,
+	  dispatchMarker,
+	  nativeEvent) {
+	  SyntheticEvent.call(this, dispatchConfig, dispatchMarker, nativeEvent);
+	}
+
+	SyntheticEvent.augmentClass(
+	  SyntheticCompositionEvent,
+	  CompositionEventInterface
+	);
+
+	module.exports = SyntheticCompositionEvent;
+
+
+/***/ },
+/* 138 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule SyntheticInputEvent
+	 * @typechecks static-only
+	 */
+
+	'use strict';
+
+	var SyntheticEvent = __webpack_require__(134);
+
+	/**
+	 * @interface Event
+	 * @see http://www.w3.org/TR/2013/WD-DOM-Level-3-Events-20131105
+	 *      /#events-inputevents
+	 */
+	var InputEventInterface = {
+	  data: null
+	};
+
+	/**
+	 * @param {object} dispatchConfig Configuration used to dispatch this event.
+	 * @param {string} dispatchMarker Marker identifying the event target.
+	 * @param {object} nativeEvent Native browser event.
+	 * @extends {SyntheticUIEvent}
+	 */
+	function SyntheticInputEvent(
+	  dispatchConfig,
+	  dispatchMarker,
+	  nativeEvent) {
+	  SyntheticEvent.call(this, dispatchConfig, dispatchMarker, nativeEvent);
+	}
+
+	SyntheticEvent.augmentClass(
+	  SyntheticInputEvent,
+	  InputEventInterface
+	);
+
+	module.exports = SyntheticInputEvent;
 
 
 /***/ },
@@ -18982,7 +19015,7 @@ module.exports =
 
 	'use strict';
 
-	var PooledClass = __webpack_require__(63);
+	var PooledClass = __webpack_require__(64);
 
 	var assign = __webpack_require__(45);
 	var invariant = __webpack_require__(50);
@@ -19223,7 +19256,7 @@ module.exports =
 
 	'use strict';
 
-	var PooledClass = __webpack_require__(63);
+	var PooledClass = __webpack_require__(64);
 	var ReactBrowserEventEmitter = __webpack_require__(112);
 
 	var assign = __webpack_require__(45);
@@ -19365,7 +19398,7 @@ module.exports =
 
 	'use strict';
 
-	var SyntheticEvent = __webpack_require__(137);
+	var SyntheticEvent = __webpack_require__(134);
 
 	/**
 	 * @interface Event
@@ -19643,7 +19676,7 @@ module.exports =
 
 	'use strict';
 
-	var SyntheticEvent = __webpack_require__(137);
+	var SyntheticEvent = __webpack_require__(134);
 
 	var getEventTarget = __webpack_require__(146);
 
@@ -20353,7 +20386,7 @@ module.exports =
 
 	'use strict';
 
-	var EventPluginHub = __webpack_require__(136);
+	var EventPluginHub = __webpack_require__(132);
 
 	function runEventQueueInBatch(events) {
 	  EventPluginHub.enqueueEvents(events);
@@ -23181,7 +23214,7 @@ module.exports =
 
 	'use strict';
 
-	var traverseAllChildren = __webpack_require__(65);
+	var traverseAllChildren = __webpack_require__(66);
 	var warning = __webpack_require__(53);
 
 	/**

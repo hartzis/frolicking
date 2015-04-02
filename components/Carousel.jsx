@@ -5,7 +5,7 @@
 
 var React = require('react')
 
-var Swipeable = React.createFactory(require('./Swipeable'))
+var Swipeable = require('./Swipeable')
 
 var Carousel = React.createClass({
   getInitialState: function () {
@@ -20,30 +20,39 @@ var Carousel = React.createClass({
   },
 
   componentDidMount: function () {
-    // var widths = Array.prototype.map.call(
-    //   React.findDOMNode(this.refs.carouselContainer).children,
-    //   function (node) {
-    //     return node.offsetWidth
-    //   }
-    // )
-    var widths = Array.prototype.map.call(
-      React.findDOMNode(this.refs.carouselContainer).children,
-      function (node) {
-        return 300
-      }
-    )
+    var widths = this._getChildrenWidths()
 
-    var totalWidth = widths.reduce(function (a, b) { return a + b }, 0)
+    this._updateWidths()
+
     var startPos = widths.reduce(function (total, width) {
       total.push(total[total.length - 1] + width)
       return total
     }, [0])
 
     this.setState({
+      itemStart: startPos
+    })
+  },
+
+  _updateWidths: function() {
+    var widths = this._getChildrenWidths()
+
+    var totalWidth = widths.reduce(function (a, b) { return a + b }, 0)
+
+    this.setState({
       itemWidths: widths,
-      itemStart: startPos,
       containerWidth: totalWidth
     })
+  },
+
+  _getChildrenWidths: function() {
+    var widths = Array.prototype.map.call(
+      React.findDOMNode(this.refs.carouselContainer).children,
+      function (node) {
+        return node.offsetWidth
+      }
+    )
+    return widths;
   },
 
   addResistance: function (delta) {
@@ -90,35 +99,26 @@ var Carousel = React.createClass({
 
     var transition = 'all 250ms ease-out'
 
-    var clear = React.createElement('div', {
-      key: 'clear',
-      style: {
-        height: 0,
-        visibility: 'hidden',
-        clear: 'left'
-      }
-    })
+    var clear = (<div style={{height: 0, visibility: 'hidden', clear: 'left'}} key="clear"></div>)
 
-    var swipeContainer = Swipeable({
-      onSwipingRight: this.prevImageScroll,
-      onSwipingLeft: this.nextImageScroll,
-      onSwiped: this.doMoveImage,
-      ref: 'carouselContainer',
-      style: {
-        WebkitTransform: 'translate3d(' + delta + 'px, 0, 0)',
-        transition: this.state.delta === 0 ? transition : 'none',
-        width: this.state.containerWidth + 'px'
-      }
-    }, this.props.children.map(function (item, i) {
-      return React.createElement('div', {
-        key: i,
-        style: { float: 'left', width: '300px' }
-      }, item)
-    }).concat(clear))
+    React.Children.forEach(this.props.children, function(child) {
+      child.props.style = {float: "left"}
+    }.bind(this))
 
     return (
       <div {...this.props} style={{overflow: 'hidden', width: '100%'}}>
-        {swipeContainer}
+        <Swipeable onSwipingRight={this.prevImageScroll}
+          onSwipingLeft={this.nextImageScroll}
+          onSwiped={this.doMoveImage}
+          ref="carouselContainer"
+          style={{
+            WebkitTransform: 'translate3d(' + delta + 'px, 0, 0)',
+            transition: this.state.delta === 0 ? transition : 'none',
+            width: this.state.containerWidth
+          }} >
+            {this.props.children}
+            {clear}
+        </Swipeable>
       </div>
     )
 
