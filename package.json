@@ -17,7 +17,14 @@
   },
   "homepage": "https://github.com/hartzis/frolicking",
   "devDependencies": {
-    "react": "0.13.1",
-    "react-router": "^0.13.2",
-  }
+    "gulp": "^3.8.11",
+    "browserify": "^9.0.7",
+    "reactify": "^1.1.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.1.0"
+  },
+  "dependencies": {
+    "react": ">=0.13.x",
+    "react-router": "^0.13.2"
+  },
 }

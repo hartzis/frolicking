@@ -8,7 +8,6 @@ var Frolick = require('./Frolick')
 // initialize touch events?
 // React.initializeTouchEvents(true)
 
-// create the index.html to be used by webpack
 var Routes = (
   <Route name="app" path="/" handler={Layout}>
     <Route name="frolick" path=":frolickId" handler={Frolick}/>
