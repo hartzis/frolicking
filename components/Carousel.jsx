@@ -5,7 +5,7 @@
 
 var React = require('react')
 
-var Swipeable = require('./Swipeable')
+var Swipeable = require('./Swipeable.jsx')
 
 var Carousel = React.createClass({
   getInitialState: function () {

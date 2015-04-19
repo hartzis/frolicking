@@ -2,8 +2,8 @@ var React = require('react');
 var Router = require('react-router');
 var Route = Router.Route;
 var DefaultRoute = Router.DefaultRoute;
-var Layout = require('./Layout');
-var Frolick = require('./Frolick')
+var Layout = require('./Layout.jsx');
+var Frolick = require('./Frolick.jsx')
 
 // initialize touch events?
 // React.initializeTouchEvents(true)

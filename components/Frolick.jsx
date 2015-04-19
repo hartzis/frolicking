@@ -1,5 +1,5 @@
 var React = require('react');
-var Carousel = require('./Carousel')
+var Carousel = require('./Carousel.jsx')
 
 var Frolick = React.createClass({
 
@@ -7,7 +7,7 @@ var Frolick = React.createClass({
     let frolick = this.props.params.frolickId ? this.props.params.frolickId : '0'
     return (
       <div>
-        {frolick}
+        {frolick} - id
         <div style={{ width: 320 }}>
           <Carousel>
             <div>
