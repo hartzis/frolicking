@@ -1,6 +1,6 @@
 var gulp = require('gulp');
 var browserify = require('browserify');
-var reactify = require('reactify');
+var babelify = require('babelify');
 var source = require('vinyl-source-stream');
 var watchify = require('watchify');
 
@@ -10,8 +10,9 @@ var outputJSFile = 'bundle.js';
 /* browserify */ 
 gulp.task('browserify', function() {
   var bundler = browserify({
-    entries: ['./components/Routes.jsx'], // Only need initial file
-    transform: [reactify], // Convert JSX to javascript
+    entries: ['./components/App.jsx'], // Only need initial file
+    // Convert JSX to javascript, and ES6/2015 js to ES5
+    transform: [babelify], 
     debug: true, cache: {}, packageCache: {}, fullPaths: false
   });
 

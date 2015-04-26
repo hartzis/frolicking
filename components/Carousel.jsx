@@ -1,8 +1,3 @@
-/*
- * modified version of
- * http://github.com/dogfessional/react-carousel
- */
-
 var React = require('react')
 
 var Swipeable = require('./Swipeable.jsx')
@@ -20,39 +15,32 @@ var Carousel = React.createClass({
   },
 
   componentDidMount: function () {
-    var widths = this._getChildrenWidths()
+    this.setWidths();
+    setInterval(function () {
+      this.setWidths()
+    }.bind(this), 2000)
+  },
 
-    this._updateWidths()
+  setWidths: function () {
+    var widths = Array.prototype.map.call(
+      React.findDOMNode(this.refs.carouselContainer).children,
+        function (node) {
+          return node.offsetWidth
+        }
+    )
 
+    var totalWidth = widths.reduce(function (a, b) { return a + b }, 0)
     var startPos = widths.reduce(function (total, width) {
       total.push(total[total.length - 1] + width)
       return total
     }, [0])
-
-    this.setState({
-      itemStart: startPos
-    })
-  },
-
-  _updateWidths: function() {
-    var widths = this._getChildrenWidths()
-
-    var totalWidth = widths.reduce(function (a, b) { return a + b }, 0)
-
-    this.setState({
-      itemWidths: widths,
-      containerWidth: totalWidth
-    })
-  },
-
-  _getChildrenWidths: function() {
-    var widths = Array.prototype.map.call(
-      React.findDOMNode(this.refs.carouselContainer).children,
-      function (node) {
-        return node.offsetWidth
-      }
-    )
-    return widths;
+    if (totalWidth !== this.state.containerWidth) {
+      this.setState({
+        itemWidths: widths,
+        itemStart: startPos,
+        containerWidth: totalWidth
+      })
+    }    
   },
 
   addResistance: function (delta) {
@@ -99,26 +87,34 @@ var Carousel = React.createClass({
 
     var transition = 'all 250ms ease-out'
 
-    var clear = (<div style={{height: 0, visibility: 'hidden', clear: 'left'}} key="clear"></div>)
+    var clear = (<div style={{height: 0, visibility: 'hidden', clear: 'left'}}></div>)
 
-    React.Children.forEach(this.props.children, function(child) {
-      child.props.style = {float: "left"}
-    }.bind(this))
+    var swipeContainerChildren = this.props.children.map(function (item, i) {
+      return (
+        <div key={i} style={{float: 'left'}}>
+          {item}
+        </div>
+      )
+    })
+
+    var swipeContainer = (
+      <Swipeable onSwipingRight={this.prevImageScroll}
+        onSwipingLeft={this.nextImageScroll}
+        onSwiped={this.doMoveImage}
+        ref="carouselContainer"
+        style={{
+          WebkitTransform: 'translate3d(' + delta + 'px, 0, 0)',
+          transition: this.state.delta === 0 ? transition : 'none',
+          width: this.state.containerWidth
+        }} >
+          {swipeContainerChildren}
+          {clear}
+      </Swipeable>
+    )
 
     return (
       <div {...this.props} style={{overflow: 'hidden', width: '100%'}}>
-        <Swipeable onSwipingRight={this.prevImageScroll}
-          onSwipingLeft={this.nextImageScroll}
-          onSwiped={this.doMoveImage}
-          ref="carouselContainer"
-          style={{
-            WebkitTransform: 'translate3d(' + delta + 'px, 0, 0)',
-            transition: this.state.delta === 0 ? transition : 'none',
-            width: this.state.containerWidth
-          }} >
-            {this.props.children}
-            {clear}
-        </Swipeable>
+        {swipeContainer}
       </div>
     )
 
