@@ -9,7 +9,7 @@ var Frolick = require('./Frolick.jsx')
 // React.initializeTouchEvents(true)
 
 var Routes = (
-  <Route name="app" path="/" handler={Layout}>
+  <Route name="app" path="/frolicking" handler={Layout}>
     <Route name="frolick" path=":frolickId" handler={Frolick}/>
     <DefaultRoute handler={Frolick}/>
   </Route>
