@@ -10,9 +10,10 @@ The intent is to learn ES2015, webpack/browserify, and better react work flows a
 - React
   - JSX
   - components
+- Redux: for state/actions
 - Tests
   - React.Testutils
-  - Jest?
+  - jsdom?
 - Babel
 - Webpack
 - Radium?
