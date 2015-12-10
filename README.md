@@ -6,6 +6,13 @@ The intent is to learn ES2015, webpack/browserify, and better react work flows a
 
 ##Todos
 
+- [ ] initial setup
+- [ ] initial deploy( github or surge.sh )
+- [ ] image carousel
+- [ ] map
+- [ ] thumbnails
+- [ ] interaction
+
 ####The Build
 - React
   - JSX
